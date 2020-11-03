@@ -30,7 +30,7 @@
   function isFalse (v) {
     return v === false
   }
-
+  
   /**
    * Check if value is primitive.
    */
