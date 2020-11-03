@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="vue.js"></script>
+    <!-- Bootstrap untuk Tombol -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <title>Unguided 1</title>
+</head>
+<body>
+    <style>
+        html, body {
+            box-sizing: border-box; 
+            height: 100%;
+            padding: 25px;
+            background-color: black;
+            color: white;
+        }
+        #app{
+            display: flex;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+        }
+        .typewriter h1 {
+            overflow: hidden; 
+            border-right: .15em solid orange; 
+            white-space: nowrap; 
+            margin: 0 auto; 
+            letter-spacing: .15em; 
+            animation: 
+            typing 3.5s steps(40) infinite,
+            blink-caret .75s step-end infinite;
+        }
+
+        @keyframes typing {
+            0% { width: 0 }
+            99% { width: 100% }
+            100% {width: 0%;}
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: orange; }
+        }
+    </style>
+    <div class="view" id="app">
+        <form name="form">
+            <div class="div" v-if="path == '.'">
+                <center>
+                    <div class="typewriter">
+                        <h1>{{ title }}</h1>
+                    </div>
+                    <br><br>
+                    <h5>Attempt Terpakai : {{ i }} / 3</h5>
+                    <output id="myOutput" name="x"></output>
+                    <BR></BR>
+                    <INPUT v-model="guess" TYPE="text" NAME="input" placeholder="Masukkan Angka Tebakan" autofocus="autofocus" size="40"></INPUT>
+                    <br><br>
+                    <input type="button" class="btn btn-primary" @click="checkInput()" value="Tebak Angka"/>
+                    <BR></BR>
+                    <div class="author" ALIGN="center">{{ author }}<a @click="showNumberToGuess()">.</a></div>
+                </center>
+            </div>
+            <div class="div" v-if="path == 'greater'">
+                <center>
+                  <h5>{{ tebak.lebih }}<h5>
+                  <BR></BR>
+                  <h5>Attempt Terpakai : {{ i }} / 3</h5>
+                  <br><br>
+                  <INPUT v-model="guess" TYPE="text" NAME="input" placeholder="Masukkan Angka Tebakan" size="40" autofocus="autofocus"></INPUT><br>
+                  <input type="button" class="btn btn-primary" @click="checkInput()" value="Tebak Angka"/>
+                  <br><br>
+                  <div class="author" ALIGN="center">{{ author }}</div>
+                </center>
+            </div>
+            <div class="div" v-if="path == 'less'">
+                <center>
+                  <h5>{{ tebak.kurang }}</h5>
+                  <BR></BR>
+                  <h5>Attempt Terpakai : {{ i }} / 3</h5><br><br>
+                  <INPUT v-model="guess" TYPE="text" NAME="input" placeholder="Masukkan Angka Tebakan" size="40" autofocus="autofocus"></INPUT><br>
+                  <input type="button" class="btn btn-primary" @click="checkInput()" value="Tebak Angka"/>
+                  <br><br>
+                  <div class="author" ALIGN="center">{{ author }}</div>
+                </center>
+            </div>
+            <div class="div" v-if="path == 'victory'">
+                <center>
+                  <h5>{{ congrat }} {{ n }}</h5>
+                  <br><br>
+                  <p>{{ i }} attempt terpakai</p><br>
+                  <input type="button" class="btn btn-primary" name="again" value="Main Lagi" @click="reload()"/>
+                  <br><br>
+                  <div class="author" ALIGN="center">{{ author }}</div>
+                </center>
+            </div>
+            <div class="div" v-if="path == 'lost'">
+                <center><h5>{{ kalah }}{{ n }}</h5><br/><br>
+                  <input type="button" class="btn btn-primary" name="again" value="   Play again " @click="reload"/>
+                  <br><br>
+                  <div class="author" ALIGN="center">{{ author }}</div>
+                </center>
+            </div>
+        </form>
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                title: "Game Tebak Angka",
+                author: "Virtus Tan | 180709832 | PAW C",
+                kalah: "Attempt Habis | Jawaban : ",
+                congrat: "Selamat, Anda Berhasil Menebak | Jawaban : ",
+                tebak: {
+                    kurang: "Angka Terlalu Kecil",
+                    lebih: "Angka Terlalu Besar",
+                },
+                n: -1,
+                i: 0,
+                path: '.',
+                guess : '' 
+            },
+            methods: {
+                setRndNumber: function() {
+                do {
+                    this.n = Math.ceil(Math.random()*10);
+                } while (this.n>10 || this.n<1);
+                },
+                checkInput : function(input) {
+		            if (this.n == -1)
+			            this.setRndNumber();
+                let num = parseInt(this.guess);
+                this.guess = '';
+                num=Math.ceil(num);
+                if (num>=1 && num<=10) {
+                    ++this.i;
+                if (num == this.n) {
+                    this.path = "victory";
+                }else{
+                if (this.i==3) {
+                    this.path = "lost";
+                }else{
+                if (num>this.n) {
+                    this.path = "greater";
+                };
+                if (num<this.n) {
+                    this.path ="less";
+                };
+              }
+            };
+        form.reset ();
+        }
+        else {
+          alert('Masukkan Angka antara 1 hingga 10');
+          form.reset ();
+            }
+        },
+        showNumberToGuess: function() {
+    		alert('Jawabannya ' + this.n);
+        },
+        reload: function() {
+            this.path = ".";
+            this.setRndNumber();
+            this.i = 0;
+            }
+        }
+    });
+    app.setRndNumber();
+    </script>
+</body>
+</html>
